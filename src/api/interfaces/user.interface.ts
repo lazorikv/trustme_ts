@@ -10,3 +10,4 @@ export interface UserInterface {
     deletedAt: Date
 }
 
+export default UserInterface;
