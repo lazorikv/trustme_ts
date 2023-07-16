@@ -34,5 +34,5 @@ export interface IApartment {
     createdAt?: Date
     updatedAt?: Date
     deletedAt?: Date
-    Address?: AddressOutput[]
+    address?: AddressOutput[]
 }

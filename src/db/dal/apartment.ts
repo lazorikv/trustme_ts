@@ -19,7 +19,10 @@ export const update = async (id: number, payload: Partial<ApartmentInput>): Prom
 }
 
 export const getById = async (id: number): Promise<ApartmentOutput> => {
-    const apartment = await Apartment.findByPk(id, {include: [Address, {
+    const apartment = await Apartment.findByPk(id, {include: [{
+        model: Address,
+        as: 'address'
+      }, {
         model: User,
         as: 'tenant'
       },
@@ -46,7 +49,10 @@ export const deleteById = async (id: number): Promise<boolean> => {
 }
 
 export const getAll = async (): Promise<IApartment[]> => {
-    return Apartment.findAll({include: [Address, {
+    return Apartment.findAll({include: [{
+        model: Address,
+        as: 'address'
+      }, {
         model: User,
         as: 'landlord'
       },

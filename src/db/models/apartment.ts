@@ -1,5 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize'
+import { DataTypes, Model, Optional, BelongsToGetAssociationMixin } from 'sequelize'
 import sequelize from '../config'
+import User from './user';
 
 interface ApartmentAttributes {
     id: number;
@@ -42,6 +43,7 @@ class Apartment extends Model<ApartmentAttributes, ApartmentInput> implements Ap
     public readonly updatedAt!: Date;
     public readonly deletedAt!: Date;
 }
+
 
 Apartment.init(
     {
@@ -88,11 +90,19 @@ Apartment.init(
         },
         tenantId: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            references: {
+                model: 'Users',
+                key: 'id',
+              }
         },
         landlordId: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: 'Users',
+                key: 'id',
+              }
         }
         
     },

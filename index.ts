@@ -5,11 +5,14 @@ import routes from './src/api/routes';
 
 dbInit()
 
-const port = 3000
+const port = 8000
+const cors = require('cors')
 
 export const get = () => {
     const app: Application = express()
 
+
+    app.use(cors())
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use('/api/v1', routes)

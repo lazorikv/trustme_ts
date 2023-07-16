@@ -6,10 +6,10 @@ import Apartment from "./models/apartment";
 const isDev = process.env.NODE_ENV === 'development'
 
 Address.hasOne(Apartment, { foreignKey: 'addressId' });
-Apartment.belongsTo(Address, { foreignKey: 'addressId' });
+Apartment.belongsTo(Address, { foreignKey: 'addressId', as: 'address' });
 
-User.hasOne(Apartment, { foreignKey: 'tenantId', as: 'tenant' });
-User.hasOne(Apartment, { foreignKey: 'landlordId', as: 'landlord' });
+User.hasOne(Apartment, { foreignKey: 'tenantId', as: 'apartmentTenant' });
+User.hasMany(Apartment, { foreignKey: 'landlordId', as: 'apartmentLandlord'});
 Apartment.belongsTo(User, { foreignKey: 'tenantId', as: 'tenant' });
 Apartment.belongsTo(User, { foreignKey: 'landlordId', as: 'landlord' });
 

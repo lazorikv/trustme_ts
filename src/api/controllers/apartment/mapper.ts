@@ -36,6 +36,6 @@ export const toApartment = (apartment: IApartment): IApartment => {
         createdAt: apartment.createdAt,
         updatedAt: apartment.updatedAt,
         deletedAt: apartment.deletedAt,
-        Address: apartment.Address
+        address: apartment.address
     }
 }

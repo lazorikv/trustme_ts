@@ -1,5 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize'
+import { DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional } from 'sequelize'
 import sequelize from '../config'
+import Apartment from './apartment';
 
 interface UserAttributes {
     id: number;
@@ -29,6 +30,9 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
     public readonly deletedAt!: Date;
+
+    public getApartments!: HasManyGetAssociationsMixin<Apartment>;
+    public addApartment!: HasManyAddAssociationMixin<Apartment, number>;
 }
 
 User.init(

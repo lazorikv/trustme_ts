@@ -12,12 +12,17 @@ const secretKey: string = process.env.SECRET_KEY as string
 authRouter.post('/signup', async (req: Request, res: Response) => {
     try {
         const payload: CreateUserDTO = req.body;
-        const { email, password } = payload;
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
+        const { email, password, phone } = payload;
+        const existingEmailUser = await User.findOne({ where: { email } });
+        const existingPhoneUser = await User.findOne({ where: { phone } });
+        if (existingEmailUser) {
             res.status(409).json({ message: 'User with this email already exists' });
             return;
         }
+        if (existingPhoneUser) {
+          res.status(409).json({ message: 'User with this phone already exists' });
+          return;
+      }
         payload.password = await bcrypt.hash(password, 10);
         const result = await signup(payload);
         return res.status(201).send(result);
