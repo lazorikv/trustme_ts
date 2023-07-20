@@ -1,3 +1,6 @@
+import { IAddressApart } from "../interfaces/apartment.integrace"
+
+
 export type CreateApartmentDTO = {
     floor: number
     room_count: number
@@ -9,6 +12,7 @@ export type CreateApartmentDTO = {
     addressId: number
     tenantId?: number | undefined
     landlordId: number
+    photos?: string[]
 }
 
 

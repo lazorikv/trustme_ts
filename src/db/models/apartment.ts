@@ -1,6 +1,5 @@
-import { DataTypes, Model, Optional, BelongsToGetAssociationMixin } from 'sequelize'
+import { DataTypes, Model, Optional} from 'sequelize'
 import sequelize from '../config'
-import User from './user';
 
 interface ApartmentAttributes {
     id: number;
@@ -11,17 +10,18 @@ interface ApartmentAttributes {
     description: string;
     title: string;
     is_rented: boolean;
-    addressId: number
-    tenantId?: number
-    landlordId: number
+    photos?: string[];
+    addressId: number;
+    tenantId?: number;
+    landlordId: number;
 
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
 }
 
-export interface ApartmentInput extends Optional<ApartmentAttributes, 'id'| 'tenantId'> {}
-export interface ApartmentOutput extends Optional<ApartmentAttributes, 'tenantId'> {}
+export interface ApartmentInput extends Optional<ApartmentAttributes, 'id'| 'tenantId'| 'photos'> {}
+export interface ApartmentOutput extends Optional<ApartmentAttributes, 'tenantId'| 'photos'> {}
 
 
 class Apartment extends Model<ApartmentAttributes, ApartmentInput> implements ApartmentAttributes {
@@ -37,6 +37,7 @@ class Apartment extends Model<ApartmentAttributes, ApartmentInput> implements Ap
     public addressId!: number
     public tenantId?: number | undefined
     public landlordId!: number
+    public photos?: string[] | undefined;
 
 
     public readonly createdAt!: Date;
@@ -103,7 +104,8 @@ Apartment.init(
                 model: 'Users',
                 key: 'id',
               }
-        }
+        },
+        photos: DataTypes.ARRAY(DataTypes.STRING),
         
     },
     {

@@ -14,6 +14,7 @@ export const toApartmentCreate = (apartment: ApartmentOutput): ApartmentOutput =
         is_rented: apartment.is_rented,
         addressId: apartment.addressId,
         tenantId: apartment.tenantId,
+        photos: apartment.photos,
         landlordId: apartment.landlordId,
         createdAt: apartment.createdAt,
         updatedAt: apartment.updatedAt,
@@ -36,6 +37,7 @@ export const toApartment = (apartment: IApartment): IApartment => {
         createdAt: apartment.createdAt,
         updatedAt: apartment.updatedAt,
         deletedAt: apartment.deletedAt,
-        address: apartment.address
+        address: apartment.address,
+        photos: apartment.photos
     }
 }

@@ -3,9 +3,24 @@ import diff from 'microdiff'
 import { Dialect, Model, Sequelize } from 'sequelize'
 import { SequelizeHooks } from 'sequelize/types/hooks'
 
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
 import localCache from '../lib/local-cache'
+import { Request } from 'express'
 
 const isTest = process.env.NODE_ENV === 'test'
+
+
+const awsConfig = {
+  region: 'us-east-1',
+  credentials: {
+    accessKeyId: 'AKIA5OM5IQ2YKSU2BTGM',
+    secretAccessKey: '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',
+  },
+};
+
+// Create an instance of the S3 client
+export const s3Client = new S3Client(awsConfig);
 
 const dbName = isTest ? process.env.TEST_DB_NAME as string : process.env.DB_NAME as string
 const dbUser = process.env.DB_USER as string

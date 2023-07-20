@@ -1,14 +1,11 @@
-import { AddressOutput } from '../../../db/models/address'
 import { ApartmentOutput } from '../../../db/models/apartment'
 import * as service from '../../../db/services/apartment'
-import { CreateAddressDTO, UpdateAddressDTO } from '../../dto/address.dto'
 import { CreateApartmentDTO, UpdateApartmentDTO } from '../../dto/apartment.dto'
-import { IAddress } from '../../interfaces/address.interface'
 import { IApartment, IApartmentCreate } from '../../interfaces/apartment.integrace'
-import * as mapper from './mapper'
+import * as mapper from './mapper';
 
 
-export const create = async(payload: CreateApartmentDTO): Promise<IApartmentCreate> => {
+export const create = async(payload: CreateApartmentDTO): Promise<ApartmentOutput> => {
     return mapper.toApartmentCreate(await service.create(payload))
 }
 
@@ -27,4 +24,12 @@ export const deleteById = async (id: number): Promise<boolean> => {
 
 export const getAll = async(): Promise<IApartment[]> => {
     return (await service.getAll()).map(mapper.toApartment)
+}
+
+export const getAllPagination = async(page:number, limit:number): Promise<IApartment[]> => {
+    return (await service.getAllPagination(page, limit)).map(mapper.toApartment)
+}
+
+export const recommendApartment = async(): Promise<IApartment[]> =>{
+    return (await service.recommendApartment()).map(mapper.toApartment)
 }

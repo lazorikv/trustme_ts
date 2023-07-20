@@ -1,11 +1,26 @@
-import { IApartment } from '../../api/interfaces/apartment.integrace'
+import express, { Request, Response } from 'express';
+import { IApartment, IApartmentCreate } from '../../api/interfaces/apartment.integrace'
 import Address from '../models/address'
 import Apartment, { ApartmentInput, ApartmentOutput } from '../models/apartment'
 import User from '../models/user'
+import sequelize from '../config'
 
 
-export const create = async (payload: ApartmentInput): Promise<ApartmentOutput> => {
-    const apartment = await Apartment.create(payload)
+export const create = async (payload: IApartmentCreate): Promise<ApartmentOutput> => {
+    const { floor, room_count, area, cost, description, title, is_rented, addressId, tenantId, landlordId, photos} = payload;
+    const apartment = await Apartment.create({
+      floor,
+      room_count,
+      area,
+      cost,
+      description,
+      title,
+      is_rented,
+      addressId,
+      tenantId,
+      landlordId,
+      photos
+    });
     return apartment
 }
 
@@ -62,3 +77,49 @@ export const getAll = async (): Promise<IApartment[]> => {
       }
     ]})
 }
+
+export const getAllPagination = async (page: number, limit: number): Promise<IApartment[]> => {
+  const offset = (page - 1) * limit;
+
+  return Apartment.findAll({
+    offset,
+    limit,
+    include: [
+      {
+        model: Address,
+        as: 'address',
+      },
+      {
+        model: User,
+        as: 'landlord',
+      },
+      {
+        model: User,
+        as: 'tenant',
+      },
+    ],
+  });
+};
+
+export const recommendApartment = async (): Promise<IApartment[]> => {
+  return Apartment.findAll({
+    include: [
+      {
+        model: Address,
+        as: 'address',
+      },
+      {
+        model: User,
+        as: 'landlord',
+      },
+      {
+        model: User,
+        as: 'tenant',
+      },
+    ],
+    order: sequelize.random(),
+    limit: 6,
+  });
+}
+
+

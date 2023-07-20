@@ -13,6 +13,7 @@ User.hasMany(Apartment, { foreignKey: 'landlordId', as: 'apartmentLandlord'});
 Apartment.belongsTo(User, { foreignKey: 'tenantId', as: 'tenant' });
 Apartment.belongsTo(User, { foreignKey: 'landlordId', as: 'landlord' });
 
+
 const dbInit = () => Promise.all( [
 
   Apartment.sync({ alter: isDev }),

@@ -1,8 +1,16 @@
 import { AddressOutput } from "../../db/models/address"
 import { UserOutput } from "../../db/models/user"
 
+export interface IAddressApart {
+    city: string
+    district: string
+    street: string
+    house_number: string
+    apart_number: string
+}
+
+
 export interface IApartmentCreate {
-    id: number
     floor: number
     room_count: number
     area: number
@@ -13,6 +21,7 @@ export interface IApartmentCreate {
     addressId: number
     tenantId?: number | undefined
     landlordId: number
+    photos?: string[]
 
     createdAt?: Date
     updatedAt?: Date
@@ -30,9 +39,14 @@ export interface IApartment {
     is_rented: boolean
     tenant?: UserOutput[]
     landlord?: UserOutput[]
+    photos?: string[]
 
     createdAt?: Date
     updatedAt?: Date
     deletedAt?: Date
     address?: AddressOutput[]
+}
+
+export interface PhotoData {
+    photos: object[]
 }
