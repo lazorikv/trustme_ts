@@ -1,9 +1,9 @@
-import express, { Request, Response } from 'express';
 import { IApartment, IApartmentCreate } from '../../api/interfaces/apartment.integrace'
 import Address from '../models/address'
 import Apartment, { ApartmentInput, ApartmentOutput } from '../models/apartment'
 import User from '../models/user'
 import sequelize from '../config'
+import { deleteS3Object } from '../../../s3'
 
 
 export const create = async (payload: IApartmentCreate): Promise<ApartmentOutput> => {
@@ -56,6 +56,18 @@ export const getById = async (id: number): Promise<ApartmentOutput> => {
 }
 
 export const deleteById = async (id: number): Promise<boolean> => {
+
+    const apartment = await getById(id)
+    console.log(apartment)
+    if (apartment.photos) {
+        try {
+          await deleteS3Object(apartment.photos)
+      }
+      catch (error) {
+          return false
+      }
+    }
+
     const deletedApartmentCount = await Apartment.destroy({
         where: {id}
     })
@@ -123,3 +135,24 @@ export const recommendApartment = async (): Promise<IApartment[]> => {
 }
 
 
+export const getAllByLandlordId = async (landlordId: number): Promise<IApartment[]> => {
+  return Apartment.findAll({
+    where: {
+      landlordId: landlordId,
+    },
+    include: [
+      {
+        model: Address,
+        as: 'address',
+      },
+      {
+        model: User,
+        as: 'landlord',
+      },
+      {
+        model: User,
+        as: 'tenant',
+      },
+    ],
+  });
+};

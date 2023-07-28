@@ -17,6 +17,10 @@ export const getById = async (id: number): Promise<IApartment> => {
     return mapper.toApartment(await service.getById(id))
 }
 
+export const getAllByLandlordId = async (id: number): Promise<IApartment[]> => {
+    return (await service.getAllByLandlordId(id)).map(mapper.toApartment)
+}
+
 export const deleteById = async (id: number): Promise<boolean> => {
     const isDeleted = await service.deleteById(id)
     return isDeleted

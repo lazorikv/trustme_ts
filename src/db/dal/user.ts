@@ -52,6 +52,26 @@ export const getLandlordById = async (id: number): Promise<LandlordApartmentInte
     return user
 }
 
+
+export const getLandlordByEmail = async (email: string): Promise<LandlordApartmentInterface> => {
+  const user = await User.findOne({
+    where: { email },
+      include: [
+        {
+          model: Apartment,
+          as: 'apartmentLandlord'
+        }
+      ]
+    })
+
+  if (!user) {
+      // @todo throw custom error
+      throw new Error('not found')
+  }
+
+  return user
+}
+
 export const deleteById = async (id: number): Promise<boolean> => {
     const deletedUserCount = await User.destroy({
         where: {id}

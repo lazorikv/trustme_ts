@@ -20,6 +20,10 @@ export const deleteById = (id: number): Promise<boolean> => {
     return apartmentDal.deleteById(id)
 }
 
+export const getAllByLandlordId = (id: number): Promise<IApartment[]> => {
+    return apartmentDal.getAllByLandlordId(id)
+}
+
 export const getAll = (): Promise<IApartment[]> => {
     return apartmentDal.getAll()
 }

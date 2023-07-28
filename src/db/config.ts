@@ -3,19 +3,19 @@ import diff from 'microdiff'
 import { Dialect, Model, Sequelize } from 'sequelize'
 import { SequelizeHooks } from 'sequelize/types/hooks'
 
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client} from '@aws-sdk/client-s3';
 
 import localCache from '../lib/local-cache'
-import { Request } from 'express'
+import { AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY } from '../../consts';
 
 const isTest = process.env.NODE_ENV === 'test'
 
 
 const awsConfig = {
-  region: 'us-east-1',
+  region: AWS_REGION,
   credentials: {
-    accessKeyId: 'AKIA5OM5IQ2YKSU2BTGM',
-    secretAccessKey: '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',
+    accessKeyId: AWS_ACCESS_KEY as string,
+    secretAccessKey: AWS_SECRET_KEY as string,
   },
 };
 
