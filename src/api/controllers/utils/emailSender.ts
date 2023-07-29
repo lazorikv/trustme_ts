@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import nodemailer from 'nodemailer';
 import { EMAIL_ADMIN, EMAIL_ORG, EMAIL_PASSWORD } from '../../../../consts';
+import EmailDTO from '../../dto/email.dto';
 
 
 const utilsRouter = Router()
@@ -20,7 +21,8 @@ const smtpConfig = {
 
   utilsRouter.post('/send-email', async (req: Request, res: Response) => {
     try {
-        const { email, firstName, lastName, emailBody } = req.body;
+        const payload: EmailDTO = req.body.email;
+        const { email, firstName, lastName, emailBody } = payload;
     
         if (!email || !firstName || !lastName || !emailBody) {
           return res.status(400).json({ error: 'All fields must be filled!' });
