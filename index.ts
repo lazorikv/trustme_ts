@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express'
 import dbInit from './src/db/init';
 import routes from './src/api/routes';
+import { hostname } from 'os';
 
 
 dbInit()
@@ -28,7 +29,7 @@ export const start = () => {
     const app = get()
     try {
         app.listen(port, () => {
-            console.log(`Server running on http://localhost:${port}`)
+            console.log(`Server running on http://0.0.0.0:${port}`)
         })
     } catch (error: any) {
         console.log(`Error occurred: ${error.message}`)

@@ -7,7 +7,7 @@ import multerS3 from 'multer-s3';
 export async function deleteS3Object(objectKeys: string[]) {
     try {
       const command = new DeleteObjectsCommand({
-        Bucket: S3_BUCKET,
+        Bucket: 'trustmets',
         Delete: {
             Objects: objectKeys.map((key) => ({ Key: key.split('/').pop() })),
             Quiet: false,
@@ -22,7 +22,7 @@ export async function deleteS3Object(objectKeys: string[]) {
 export const upload = multer({
     storage: multerS3({
       s3: s3Client,
-      bucket: S3_BUCKET as string,
+      bucket: 'trustmets' as string,
       acl: 'public-read',
       key: function (req, file, cb) {
         cb(null, Date.now().toString() + '-' + file.originalname);

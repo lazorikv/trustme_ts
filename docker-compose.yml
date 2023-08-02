@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  # Express TypeScript API service
+  api:
+    build:
+      context: . # Replace this with the path to your Express API app
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000" # Map the container's port 3000 to the host's port 3000 (adjust if needed)
+    depends_on:
+      - db # Make sure the API service waits for the PostgreSQL service to be up
+    environment:
+      - NODE_ENV=development # Set the NODE_ENV environment variable to "production" in the API container
+
+  # PostgreSQL service
+  db:
+    build:
+      context: . # Replace this with the path to your PostgreSQL setup
+      dockerfile: Dockerfile.postgres
+    environment:
+      - POSTGRES_USER=express_user # Replace with your desired PostgreSQL username
+      - POSTGRES_PASSWORD=express_password # Replace with your desired PostgreSQL password
+      - POSTGRES_DB=express # Replace with your desired PostgreSQL database name
+    ports:
+      - "5432:5432" # Map the container's port 5432 to the host's port 5432 (adjust if needed)
+    expose:
+      - 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist PostgreSQL data using a named volume
+
+# Named volume for PostgreSQL data persistence
+volumes:
+  pgdata:

@@ -8,10 +8,19 @@ import getUser from '../controllers/auth/getUser'
 import { deleteS3Object, upload } from '../../../s3'
 import { compareAndFilterLists } from '../../../utils'
 import { getById} from '../../db/dal/apartment';
+import Address from '../../db/models/address'
+import { Op } from 'sequelize'
+import Apartment from '../../db/models/apartment'
+import User from '../../db/models/user'
 
 
 
 const apartmentRouter = Router()
+
+interface InputData {
+    photos: File[],
+    data: unknown
+}
 
 apartmentRouter.get('/rec', checkCache, async (req: Request, res: Response) => {
     const results = await apartmentController.recommendApartment()
@@ -20,7 +29,7 @@ apartmentRouter.get('/rec', checkCache, async (req: Request, res: Response) => {
 
 apartmentRouter.post('/', upload.fields([{ name: 'data' }, { name: 'photos' }]),  async (req: Request, res: Response) => {
     
-    let authorizationHeader = req.headers.token;
+    let authorizationHeader = req.headers.token as string;
     if (!authorizationHeader) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -31,20 +40,93 @@ apartmentRouter.post('/', upload.fields([{ name: 'data' }, { name: 'photos' }]),
     catch (error) {
         return res.status(401).json({ message: 'Not valid token' });
     }
-    const addressData: CreateAddressDTO = payload.address
+    const addressData: CreateAddressDTO = payload.addressId as any
     const address = await addressController.create(addressData)
     payload.addressId = address.id
-    const photos_data = req.files;
+    const photos_data: any = req.files;
     const photosUrl = [];
-    if (photos_data.photos) {
-        for (const photo of photos_data.photos) {
-            photosUrl.push(photo.location)
+    if (photos_data) {
+        if (photos_data.photos) {
+            for (const photo of photos_data.photos) {
+                photosUrl.push(photo.location)
+            }
         }
     }
     payload.photos = photosUrl;
     const result = await apartmentController.create(payload)
     return res.status(200).send(result)
 })
+
+apartmentRouter.get("/search", async (req: Request, res: Response) => {
+    try {
+      const { location, page, limit, rooms, floor, minPrice, maxPrice } = req.query as unknown as {
+        location: string;
+        page: number | undefined;
+        limit: number | undefined;
+        rooms: number | undefined;
+        floor: number | undefined;
+        minPrice: number | undefined;
+        maxPrice: number | undefined;
+      };
+      
+      const pageParse = page || 1;
+      const limitParse = limit || 9;
+      const offset = (pageParse - 1) * limitParse;
+      // Find apartments with matching location from the Address table.
+      const addresses = await Address.findAll({
+        where: {
+          city: {
+            [Op.like]: `%${location}%`, // Partial search for location.
+          },
+        },
+        attributes: ["id"], // Select only the 'id' field from the Address table.
+      });
+  
+      // Extract the address ids from the addresses array.
+      const addressIds = addresses.map((address) => address.id);
+  
+      // Search for apartments that match the given criteria.
+      const apartmentFilter = {
+        addressId: addressIds,
+        room_count: rooms || { [Op.gt]: 0 },
+        floor: floor || { [Op.gt]: 0 },
+        cost: {
+          [Op.between]: [minPrice || 0, maxPrice || Number.MAX_SAFE_INTEGER],
+        },
+      };
+      
+      // Get the count of all records matching the filters
+      const totalApartmentsCount = await Apartment.count({
+        where: apartmentFilter,
+      });
+      
+      // Fetch the apartments with the offset and limit
+      const apartments = await Apartment.findAll({
+        offset,
+        limit,
+        where: apartmentFilter,
+        include: [
+          {
+            model: Address,
+            as: "address",
+          },
+          {
+            model: User,
+            as: "tenant",
+          },
+          {
+            model: User,
+            as: "landlord",
+          },
+        ],
+      });
+      const result = [apartments, totalApartmentsCount]
+    return res.status(200).send(result)
+    } catch (error) {
+      console.error("Error while searching for apartments:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
 
 apartmentRouter.get('/', checkCache, async (req: Request, res: Response) => {
     const page: number = parseInt(req.query.page as string) || 1
@@ -71,7 +153,7 @@ apartmentRouter.get('/:id/landlord', async (req: Request, res: Response) => {
 
 apartmentRouter.put('/:id',  upload.fields([{ name: 'data' }, { name: 'photos' }]), async (req: Request, res: Response) => {
     const id = Number(req.params.id)
-    const photos_data = req.files;
+    const photos_data: any = req.files;
     const payload: UpdateApartmentDTO = JSON.parse(req.body.data)
     if (photos_data && payload.photos) {
         try {
@@ -114,5 +196,6 @@ apartmentRouter.delete('/:id', async (req: Request, res: Response) => {
         success: result
     })
 })
+  
 
 export default apartmentRouter 
