@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
-import { CreateUserDTO, UpdateUserDTO } from '../dto/user.dto'
+import { UpdateUserDTO } from '../dto/user.dto'
+import * as bcrypt from 'bcrypt';
 import * as userController from '../controllers/user'
 import { checkCache } from '../../lib/check-cache'
 
@@ -47,7 +48,7 @@ userRouter.get('/', checkCache, async (req: Request, res: Response) => {
 userRouter.put('/:id', async (req: Request, res: Response) => {
     const id = Number(req.params.id)
 
-    const payload:UpdateUserDTO = req.body
+    const payload:UpdateUserDTO = req.body;
     const result = await userController.update(id, payload)
     return res.status(201).send(result)
 })

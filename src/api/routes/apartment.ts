@@ -12,6 +12,7 @@ import Address from '../../db/models/address'
 import { Op } from 'sequelize'
 import Apartment from '../../db/models/apartment'
 import User from '../../db/models/user'
+import { tokenRequired } from '../../middlewares/jwtMiddleware'
 
 
 
@@ -27,15 +28,11 @@ apartmentRouter.get('/rec', checkCache, async (req: Request, res: Response) => {
     return res.status(200).send(results)
   })
 
-apartmentRouter.post('/', upload.fields([{ name: 'data' }, { name: 'photos' }]),  async (req: Request, res: Response) => {
+apartmentRouter.post('/', tokenRequired, upload.fields([{ name: 'data' }, { name: 'photos' }]),  async (req: Request, res: Response) => {
     
-    let authorizationHeader = req.headers.token as string;
-    if (!authorizationHeader) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
     const payload: CreateApartmentDTO = JSON.parse(req.body.data)
     try {
-        payload.landlordId = await getUser(authorizationHeader)
+        payload.landlordId = req.user.id
     }
     catch (error) {
         return res.status(401).json({ message: 'Not valid token' });
@@ -128,7 +125,8 @@ apartmentRouter.get("/search", async (req: Request, res: Response) => {
     }
   });
 
-apartmentRouter.get('/', checkCache, async (req: Request, res: Response) => {
+apartmentRouter.get('/', tokenRequired, async (req: Request, res: Response) => {
+  console.log(req.user)
     const page: number = parseInt(req.query.page as string) || 1
     const limit: number = parseInt(req.query.limit as string) || 155
     const limitedApartments = await apartmentController.getAllPagination(page, limit)

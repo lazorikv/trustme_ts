@@ -10,3 +10,4 @@ export const EMAIL_ADMIN = process.env.EMAIL_ADMIN!;
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD!;
 export const EMAIL_ORG = process.env.EMAIL_ORG!;
 export const DB_DRIVER = process.env.DB_DRIVER!;
+export const SECRET_KEY = process.env.SECRET_KEY!;

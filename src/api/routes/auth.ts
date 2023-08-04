@@ -5,10 +5,10 @@ import { signup} from '../controllers/auth';
 import User from '../../db/models/user';
 import { CreateUserDTO, LoginUserDTO } from '../dto/user.dto';
 import { getLandlordByEmail } from '../../db/dal/user';
+import { SECRET_KEY } from '../../../consts';
 
 
 const authRouter = Router();
-const secretKey: string = process.env.SECRET_KEY as string
 
 authRouter.post('/signup', async (req: Request, res: Response) => {
     try {
@@ -46,13 +46,12 @@ authRouter.post('/login', async(req: Request, res: Response) => {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        console.log(passwordMatch)
         if (!passwordMatch) {
           res.status(401).json({ message: 'Invalid email or password' });
           return;
         }
 
-        const token = jwt.sign({ id: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
     
         res.status(200).json({ message: 'Login successful', token, user });
       } catch (error) {
