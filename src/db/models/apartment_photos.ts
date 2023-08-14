@@ -3,15 +3,17 @@ import sequelize from '../config';
 
 interface ApartmentPhotoAttributes {
   id: number;
-  apartmentId: number;
+  apartmentId: string;
   url: string;
 }
 
-interface ApartmentPhotoCreationAttributes extends Optional<ApartmentPhotoAttributes, 'id'> {}
+export interface ApartmentPhotoCreationAttributes extends Optional<ApartmentPhotoAttributes, 'id'> {}
+
+export interface ApartmentPhotoOutput extends Required<ApartmentPhotoAttributes> {}
 
 export class ApartmentPhoto extends Model<ApartmentPhotoAttributes, ApartmentPhotoCreationAttributes> implements ApartmentPhotoAttributes {
   public id!: number;
-  public apartmentId!: number;
+  public apartmentId!: string;
   public url!: string;
 
   public readonly createdAt!: Date;
@@ -26,7 +28,7 @@ ApartmentPhoto.init(
       primaryKey: true,
     },
     apartmentId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     url: {

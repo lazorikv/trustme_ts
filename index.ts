@@ -4,7 +4,7 @@ import routes from './src/api/routes';
 import { hostname } from 'os';
 
 
-dbInit()
+dbInit().then((e)=>{console.log(e) }).catch((e )=>{ console.log(e) })
 
 const port = 8000
 const cors = require('cors')

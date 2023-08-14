@@ -1,6 +1,5 @@
 import { IApartment, IApartmentCreate } from '../../api/interfaces/apartment.integrace';
 import * as apartmentDal from '../dal/apartment'
-import { AddressInput, AddressOutput} from '../models/address';
 import { ApartmentInput, ApartmentOutput } from '../models/apartment';
 
 
@@ -28,8 +27,8 @@ export const getAll = (): Promise<IApartment[]> => {
     return apartmentDal.getAll()
 }
 
-export const getAllPagination = (page: number, limit: number): Promise<IApartment[]> => {
-    return apartmentDal.getAllPagination(page, limit)
+export const getAllPagination = (page: number, limit: number, filter?:any): Promise<IApartment[]> => {
+    return apartmentDal.getAllPagination(page, limit, filter)
 }
 
 export const recommendApartment = (): Promise<IApartment[]> => {

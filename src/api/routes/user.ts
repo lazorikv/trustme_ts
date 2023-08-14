@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express'
 import { UpdateUserDTO } from '../dto/user.dto'
-import * as bcrypt from 'bcrypt';
 import * as userController from '../controllers/user'
 import { checkCache } from '../../lib/check-cache'
 

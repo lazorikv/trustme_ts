@@ -1,4 +1,4 @@
-import { CreateUserDTO, LoginUserDTO } from '../../dto/user.dto';
+import { CreateUserDTO } from '../../dto/user.dto';
 import * as service from '../../../db/services/user'
 import {UserInterface} from '../../interfaces/user.interface';
 import * as mapper from './mapper'

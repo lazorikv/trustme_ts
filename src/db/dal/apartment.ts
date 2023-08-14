@@ -3,11 +3,11 @@ import Address from '../models/address'
 import Apartment, { ApartmentInput, ApartmentOutput } from '../models/apartment'
 import User from '../models/user'
 import sequelize from '../config'
-import { deleteS3Object } from '../../../s3'
+import ApartmentPhoto from '../models/apartment_photos'
 
 
 export const create = async (payload: IApartmentCreate): Promise<ApartmentOutput> => {
-    const { floor, room_count, area, cost, description, title, is_rented, addressId, tenantId, landlordId, photos} = payload;
+    const { floor, room_count, area, cost, description, title, is_rented, addressId, tenantId, landlordId} = payload;
     const apartment = await Apartment.create({
       floor,
       room_count,
@@ -18,8 +18,7 @@ export const create = async (payload: IApartmentCreate): Promise<ApartmentOutput
       is_rented,
       addressId,
       tenantId,
-      landlordId,
-      photos
+      landlordId
     });
     return apartment
 }
@@ -44,7 +43,11 @@ export const getById = async (id: number): Promise<ApartmentOutput> => {
       {
         model: User,
         as: 'landlord'
-      }
+      },
+      {
+        model: ApartmentPhoto,
+        as: 'photos',
+      },
     ]})
 
     if (!apartment) {
@@ -58,15 +61,6 @@ export const getById = async (id: number): Promise<ApartmentOutput> => {
 export const deleteById = async (id: number): Promise<boolean> => {
 
     const apartment = await getById(id)
-    console.log(apartment)
-    if (apartment.photos) {
-        try {
-          await deleteS3Object(apartment.photos)
-      }
-      catch (error) {
-          return false
-      }
-    }
 
     const deletedApartmentCount = await Apartment.destroy({
         where: {id}
@@ -86,14 +80,18 @@ export const getAll = async (): Promise<IApartment[]> => {
       {
         model: User,
         as: 'tenant'
-      }
+      },
+      {
+        model: ApartmentPhoto,
+        as: 'photos',
+      },
     ]})
 }
 
-export const getAllPagination = async (page: number, limit: number): Promise<IApartment[]> => {
+export const getAllPagination = async (page: number, limit: number, filter?: any): Promise<IApartment[]> => {
   const offset = (page - 1) * limit;
-
-  return Apartment.findAll({
+  
+  const queryOptions: any = {
     offset,
     limit,
     include: [
@@ -109,8 +107,19 @@ export const getAllPagination = async (page: number, limit: number): Promise<IAp
         model: User,
         as: 'tenant',
       },
+      {
+        model: ApartmentPhoto,
+        as: 'photos',
+      },
     ],
-  });
+  };
+  console.log(filter)
+
+  if (filter) {
+    queryOptions.where = filter;
+  }
+
+  return Apartment.findAll(queryOptions);
 };
 
 export const recommendApartment = async (): Promise<IApartment[]> => {
@@ -127,6 +136,10 @@ export const recommendApartment = async (): Promise<IApartment[]> => {
       {
         model: User,
         as: 'tenant',
+      },
+      {
+        model: ApartmentPhoto,
+        as: 'photos',
       },
     ],
     order: sequelize.random(),
@@ -152,6 +165,10 @@ export const getAllByLandlordId = async (landlordId: number): Promise<IApartment
       {
         model: User,
         as: 'tenant',
+      },
+      {
+        model: ApartmentPhoto,
+        as: 'photos',
       },
     ],
   });

@@ -1,9 +1,6 @@
 FROM postgres:latest
-
-# Set the environment variables for PostgreSQL
 ENV POSTGRES_USER=express_user
 ENV POSTGRES_PASSWORD=express_password
 ENV POSTGRES_DB=express
 
-# Expose the default PostgreSQL port (adjust this if needed)
 EXPOSE 5432

@@ -1,4 +1,3 @@
-import { AddressOutput } from "../../../db/models/address"
 import { ApartmentOutput } from "../../../db/models/apartment"
 import { IApartment } from '../../interfaces/apartment.integrace';
 
@@ -14,7 +13,6 @@ export const toApartmentCreate = (apartment: ApartmentOutput): ApartmentOutput =
         is_rented: apartment.is_rented,
         addressId: apartment.addressId,
         tenantId: apartment.tenantId,
-        photos: apartment.photos,
         landlordId: apartment.landlordId,
         createdAt: apartment.createdAt,
         updatedAt: apartment.updatedAt,

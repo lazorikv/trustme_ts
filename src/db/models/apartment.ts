@@ -10,7 +10,6 @@ interface ApartmentAttributes {
     description: string;
     title: string;
     is_rented: boolean;
-    photos?: string[];
     addressId: number;
     tenantId?: number;
     landlordId: number;
@@ -20,8 +19,8 @@ interface ApartmentAttributes {
     deletedAt?: Date;
 }
 
-export interface ApartmentInput extends Optional<ApartmentAttributes, 'id'| 'tenantId'| 'photos'> {}
-export interface ApartmentOutput extends Optional<ApartmentAttributes, 'tenantId'| 'photos'> {}
+export interface ApartmentInput extends Optional<ApartmentAttributes, 'id'| 'tenantId'> {}
+export interface ApartmentOutput extends Optional<ApartmentAttributes, 'tenantId'> {}
 
 
 class Apartment extends Model<ApartmentAttributes, ApartmentInput> implements ApartmentAttributes {
@@ -37,7 +36,6 @@ class Apartment extends Model<ApartmentAttributes, ApartmentInput> implements Ap
     public addressId!: number
     public tenantId?: number | undefined
     public landlordId!: number
-    public photos?: string[] | undefined;
 
 
     public readonly createdAt!: Date;
@@ -74,7 +72,7 @@ Apartment.init(
             unique: false
         },
         description: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: true
         },
         title: {
@@ -104,8 +102,7 @@ Apartment.init(
                 model: 'Users',
                 key: 'id',
               }
-        },
-        photos: DataTypes.ARRAY(DataTypes.STRING),
+        }
         
     },
     {

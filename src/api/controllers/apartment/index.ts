@@ -30,8 +30,8 @@ export const getAll = async(): Promise<IApartment[]> => {
     return (await service.getAll()).map(mapper.toApartment)
 }
 
-export const getAllPagination = async(page:number, limit:number): Promise<IApartment[]> => {
-    return (await service.getAllPagination(page, limit)).map(mapper.toApartment)
+export const getAllPagination = async(page:number, limit:number, filter?: any): Promise<IApartment[]> => {
+    return (await service.getAllPagination(page, limit, filter)).map(mapper.toApartment)
 }
 
 export const recommendApartment = async(): Promise<IApartment[]> =>{
