@@ -28,7 +28,7 @@ ApartmentPhoto.init(
       primaryKey: true,
     },
     apartmentId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     url: {
